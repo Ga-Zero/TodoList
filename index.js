@@ -10,8 +10,13 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// 정적 파일 경로 설정
 app.use(express.static(path.join(__dirname, "public")));
+
+// 뷰 엔진 설정 및 뷰 파일 경로 설정
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -20,8 +25,7 @@ const port = process.env.PORT || 3000;
 app.get("/", function (req, res) {
   res.render("index");
 });
-
-app.use("/", postRoutes); //모든 요청은 postRoutes로 거침
+app.use("/", postRoutes);
 
 async function start() {
   const client = await connectDB();
@@ -34,6 +38,7 @@ async function start() {
       console.log("서버 실행중...");
     });
   }
+
   process.on("SIGINT", async () => {
     try {
       await client.close();
@@ -45,4 +50,9 @@ async function start() {
     }
   });
 }
-start();
+start().catch((err) => {
+  console.error("서버 시작 중 오류 발생:", err);
+  process.exit(1);
+});
+
+export default app;
