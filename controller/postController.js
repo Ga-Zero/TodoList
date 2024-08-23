@@ -1,4 +1,5 @@
 import Post from "../models/post.js";
+import { ObjectId } from "mongodb";
 
 export const listPosts = async (req, res) => {
   try {
@@ -11,10 +12,10 @@ export const listPosts = async (req, res) => {
 };
 
 export const createPost = async (req, res) => {
-  //Post.create()
+  console.log(req.body);
   try {
     await Post.create(req.body);
-    res.redirect("list");
+    res.redirect("/list");
   } catch (err) {
     console.error(err);
     res.status(500).send("서버 오류가 발생했습니다.");
@@ -78,7 +79,7 @@ export const updatePost = async (req, res) => {
       res.json({
         success: true,
         message: "수정 완료",
-        redirectUrl: `/detail/${_id.toString()}`,
+        redirectUrl: `/detail/${req.params.id.toString()}`,
       });
     } else {
       res.status(404).json({
